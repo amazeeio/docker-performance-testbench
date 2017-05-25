@@ -10,13 +10,12 @@ function createFolder {
 }
 
 function setupDockerCompose {
-  echo "### changing docker-compose.yml hostname to $1"
+  echo "### changing docker-compose.yml hostname to $1.docker.amazee.io"
   sed -i -e "s/changeme.docker.amazee.io/$1.docker.amazee.io/" $1/docker-compose.yml
 }
 
 function configureMountType {
   echo "### changing docker-compose.yml to use $1 volume mount"
-  sed -i -e "s/changeme.docker.amazee.io/$1.docker.amazee.io/" $1/docker-compose.yml
   sed -i -e "s/.:\/var\/www\/drupal\/public_html$/.:\/var\/www\/drupal\/public_html:$1/" $1/docker-compose.yml
 }
 
@@ -25,6 +24,7 @@ for i in cachalot cached consistent delegated; do
   setupDockerCompose $i
 done
 
+# Set the MountType in docker-compose, important: not for cachalot as cachalot does not support any mount types
 for i in cached consistent delegated; do
   configureMountType $i
 done
