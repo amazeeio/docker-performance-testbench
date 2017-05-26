@@ -1,4 +1,10 @@
-cached
-delegated
-consistent
-cachalot
+/cached/*
+!/cached/docker-compose.yml
+/delegated/*
+!/delegated/docker-compose.yml
+/consistent/*
+!/consistent/docker-compose.yml
+/cachalot/*
+!/cachalot/docker-compose.yml
+composer-cache
+drupal

@@ -1,30 +1,13 @@
 #!/bin/bash
 
-function createFolder {
-  chmod -R +w $1
-  rm -rf $1
-  mkdir -p $1
+function setupCache {
+  echo "### warming composer-cache to be mounted into docker containers"
+  chmod -R +w composer-cache drupal
+  rm -rf composer-cache drupal
+  mkdir -p composer-cache drupal
 
-  echo "### composer create-project in $1"
-  composer create-project amazeeio/drupal-project:8.x-dev $1 --no-interaction &> /dev/null
+  mkdir -p composer-cache
+  COMPOSER_CACHE_DIR=$PWD/composer-cache composer create-project amazeeio/drupal-project:8.x-dev drupal --no-interaction &> /dev/null
 }
 
-function setupDockerCompose {
-  echo "### changing docker-compose.yml hostname to $1.docker.amazee.io"
-  sed -i -e "s/changeme.docker.amazee.io/$1.docker.amazee.io/" $1/docker-compose.yml
-}
-
-function configureMountType {
-  echo "### changing docker-compose.yml to use $1 volume mount"
-  sed -i -e "s/.:\/var\/www\/drupal\/public_html$/.:\/var\/www\/drupal\/public_html:$1/" $1/docker-compose.yml
-}
-
-for i in cachalot cached consistent delegated; do
-  createFolder $i
-  setupDockerCompose $i
-done
-
-# Set the MountType in docker-compose, important: not for cachalot as cachalot does not support any mount types
-for i in cached consistent delegated; do
-  configureMountType $i
-done
+setupCache
